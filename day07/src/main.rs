@@ -89,4 +89,4 @@ fn count_possibilities(target: u64, ls: Vec<u64>, total: u64, i: usize) -> usize
         + count_possibilities(target, ls.clone(), concat(total, ls[i]), i + 1)
 }
 
-const DATA: &str = include_str!("007.txt");
+const DATA: &str = include_str!("../007.txt");
