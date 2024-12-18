@@ -10,8 +10,6 @@ with open(f"{Path(__file__).parent.resolve()}/017.txt") as file:
     instrs = [int(i) for i in instrs.split(": ")[1].split(",")]
     instr_ptr = 0
 
-    reg_a = 7474474103313322340
-
     out = []
     while True:
         if instr_ptr >= len(instrs):

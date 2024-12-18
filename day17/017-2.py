@@ -13,11 +13,13 @@ from pathlib import Path
 def f(a):
     return 3 ^ (a % 8) ^ ((a // 2 ** (7 ^ (a % 8))) % 8)
 
-def str2b8(s):
-    acc = 0
-    for i, l in enumerate(s):
-        acc += int(l) * 8**(len(s) - i-1)
-    return acc
+def sim(reg_a):
+    out = []
+    while reg_a > 0:
+        out.append(f(reg_a))
+        reg_a //= 8
+    return out
+
 
 with open(f"{Path(__file__).parent.resolve()}/017.txt") as file:
     data = file.read().strip()
@@ -25,47 +27,20 @@ with open(f"{Path(__file__).parent.resolve()}/017.txt") as file:
     instrs = data.split("\n\n")[1]
     instrs = [int(i) for i in instrs.split(": ")[1].split(",")]
 
-    memo = [set() for i in range(8)]
-    for i in range(8**4):
-        memo[f(i)].add(f"{i // 8**3}{i // 8**2 % 8}{i // 8 % 8}{i % 8}")
-        if (f(i) != f(str2b8(f"{i // 8**3}{i // 8**2 % 8}{i // 8 % 8}{i % 8}"))):
-            print(i)
-            print(f(i))
-            print(f"{i // 8**3}{i // 8**2 % 8}{i // 8 % 8}{i % 8}")
-            print(str2b8(f"{i // 8**3}{i // 8**2 % 8}{i // 8 % 8}{i % 8}"))
-            quit()
+    a_opts = set([0])
 
-    valids = dict((i,set([i + ":" + str(f(str2b8(i)))])) for i in memo[instrs[-1]])
-    for instr in instrs[-2::-1]:
-        top_of_valids = dict()
-        for i in valids:
-            if i[-3:] in top_of_valids.keys():
-                top_of_valids[i[-3:]].add(i)
-            else:
-                top_of_valids[i[-3:]] = {i}
-        
-        new_valids = dict()
-        for rest in memo[instr]:
-            if rest[:3] in top_of_valids.keys():
-                for valid in top_of_valids[rest[:3]]:
-                    new_valids[valid + rest[-1]] = (*valids[valid], rest + ":" + str(f(str2b8(rest))))
-        valids = new_valids
-    print(valids)
-
-    # This simulator is accurate, so f is definitely correct.
-    print(f(2340))
-    out = []
-    a = 7474474103313322340
-    while a > 0:
-        out.append(str(f(a)))
-        a //= 8
-    print(",".join(out))
-        
-            
-             
-    # Here's the algo
-    # We're keeping a set of valid base 8 digits, starting from the MSD. 
-    # The MSD is processed last, so corresponds to the final instruction.
+    flag = True
+    while flag:
+        new_a = set()
+        for opt in a_opts:
+            for i in range(8):
+                produces = sim(opt * 8 + i)
+                if produces == instrs[-len(produces):]:
+                    new_a.add(opt * 8 + i)
+                if produces == instrs:
+                    flag = False
+        a_opts = new_a
+    print(min(a_opts))
     
 
 
