@@ -9,13 +9,8 @@ def iterate(num):
 
 with open(f"{Path(__file__).parent.resolve()}/022.txt") as file:
     data = file.read().strip()
-    #data = \
-    """1
-2
-3
-2024"""
 
-    valid_seqs = dict()
+    seq_cache = dict()
 
     for i,line in enumerate(data.split("\n")):
         curr = int(line)
