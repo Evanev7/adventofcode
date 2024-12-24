@@ -13,20 +13,17 @@ with open(f"{Path(__file__).parent.resolve()}/022.txt") as file:
     seq_cache = dict()
 
     for i,line in enumerate(data.split("\n")):
+        checked = set()
         curr = int(line)
         w = (0,0,0,0)
-        for checked in range(2000):
+        for _ in range(2000):
             nxt = iterate(curr)
             w = (w[1], w[2], w[3], nxt % 10 - curr % 10)
             diff = nxt % 10 - curr % 10
             curr = nxt
             if w not in seq_cache.keys():
-                seq_cache[w] = [nxt % 10, set([i])]
-            elif i not in seq_cache[w][1]: 
-                seq_cache[w][0] += nxt % 10
-                seq_cache[w][1].add(i)
-    best = (None, [0, set()])
-    for key, val in seq_cache.items():
-        if val[0] > best[1][0]:
-            best = (key, val)
-    print(best)
+                seq_cache[w] = 0
+            if w not in checked and _ > 3: 
+                seq_cache[w] += nxt % 10
+                checked.add(w)
+    print(max(seq_cache.values()))
