@@ -15,15 +15,17 @@ with open(f"{Path(__file__).parent.resolve()}/022.txt") as file:
     for i,line in enumerate(data.split("\n")):
         checked = set()
         curr = int(line)
-        w = (0,0,0,0)
+        w = (None,None,None,None)
         for _ in range(2000):
             nxt = iterate(curr)
             w = (w[1], w[2], w[3], nxt % 10 - curr % 10)
             diff = nxt % 10 - curr % 10
             curr = nxt
+            if None in w:
+                continue
             if w not in seq_cache.keys():
                 seq_cache[w] = 0
-            if w not in checked and _ > 3: 
+            if w not in checked: 
                 seq_cache[w] += nxt % 10
                 checked.add(w)
     print(max(seq_cache.values()))

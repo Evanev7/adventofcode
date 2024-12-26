@@ -74,6 +74,12 @@ basis = {
     '<<':24,
 }
 
+def unbasis(i):
+    for k,v in basis.items():
+        if v == i:
+            return k
+    return ""
+
 class KeypadMatrix:
     def __init__(self, preinit = None):
         if preinit != None:
@@ -110,6 +116,9 @@ class KeypadMatrix:
             for j in i:
                 tot += j
         return tot
+    
+    def debug_states(self):
+        return (" ".join([unbasis(i) * j[0] for i,j in enumerate(self.matrix)]))
 
 def dir_to_string(pos, target):
     # if we need to dodge the gap
@@ -145,15 +154,18 @@ def state_to_vec(s):
 
 # I miss the indentation ok
 if __name__ == "__main__":
+    print("A^v><")
     data = """029A"""
     print(get_numpad(data))
     k = KeypadMatrix()
     s = "vA"
-    print(string_to_states(s))
+    # vA -> Av vA -> A< <v vA A^ ^> >A
+    print(state_to_vec(string_to_states(s)).debug_states())
     print((k * state_to_vec(string_to_states(s))).matrix)
+    print((k * state_to_vec(string_to_states(s))).debug_states())
     print((k * state_to_vec(string_to_states(s))).sum_items())
     for string in data.split("\n"):
         numpad = get_numpad(string)
         print(numpad)
-        print(k * state_to_vec(string_to_states(s)))
+        print((k**2 * state_to_vec(string_to_states(s))).matrix)
         print((k**3 * state_to_vec(string_to_states(s))).sum_items())
